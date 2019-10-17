@@ -2,13 +2,13 @@ const express = require('express');
 const bodyParser = require('body-parser');
 
 const productsRoutes = require('./resources/productos/products.routes');
+const usersRoutes = require('./resources/users/users.routes');
 
 const app = express();
 
 app.use(bodyParser.json())
 app.use('/products', productsRoutes);
-
-
+app.use('/users', usersRoutes);
 
 /************************** */
 // READ
