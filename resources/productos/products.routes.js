@@ -1,7 +1,6 @@
 const express = require('express')
 const uuidv4 = require('uuid/v4');
 
-
 const validateProduct = require('./products.validate');
 
 let products = require('../../db').products;
@@ -22,9 +21,12 @@ productsRoutes.post('/', validateProduct, (req, res) => {
 productsRoutes.put('/:id', (req, res) => {
   const filterProduct = products.filter(product => product.id === req.params.id)[0];
 
-  const updatedProduct = { ...filterProduct, ...req.body  };
-
-  res.json(updatedProduct);
+  if (filterProduct.owner === req.body.owner) {
+    const updatedProduct = { ...filterProduct, ...req.body };
+    res.json(updatedProduct);
+  } else {
+    return res.status(403).send('No tienes permiso.');
+  }
 })
 
 // DESTROY
@@ -32,12 +34,13 @@ productsRoutes.put('/:id', (req, res) => {
 productsRoutes.delete('/:id', (req, res) => {
   const filterProduct = products.filter(product => product.id === req.params.id)[0];
 
-  const productsWithoutSelected = products.filter(product => product.id !== req.params.id)[0];
-
-  products = productsWithoutSelected;
-
-  res.json(filterProduct);
+  if (filterProduct.owner === req.body.owner) {
+    const productsWithoutSelected = products.filter(product => product.id !== req.params.id)[0];
+    products = productsWithoutSelected;
+    res.json(filterProduct);
+  } else {
+    return res.status(403).send('No tienes permiso.');
+  }
 });
-
 
 module.exports = productsRoutes;
