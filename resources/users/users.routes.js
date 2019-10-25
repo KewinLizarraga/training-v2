@@ -31,7 +31,7 @@ usersRoutes.delete('/:id', (req, res) => {
 	const filterUser = users.filter(user => user.id === req.params.id)[0];
 	const userWithoutSelected = users.filter(user => user.id !== req.params.id)[0];
 	users = userWithoutSelected;
-	res.json(filterUser);
+	res.json({filterUser,message: `Se elimino a ${filterUser.name}`});
 });
 
 usersRoutes.post('/login', (req, res) => {

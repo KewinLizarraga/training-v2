@@ -1,29 +1,10 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-
 const morgan = require('morgan');
 
-const passport = require('passport');
-const authJWT = require('passport-jwt');
-
-const jwtOptions = {
-  secretOrKey: 'SECRET_KEY',
-  jwtFromRequest: authJWT.ExtractJwt.fromAuthHeaderAsBearerToken()
-}
-
-let jwtStrategy = new authJWT.Strategy({ ...jwtOptions }, (jwtPayload, next)=> {
-  // usuarioDelPayLoad
-  console.log(jwtPayload);
-  next(null, {
-    id: jwtPayload.id
-  });
-});
-
-passport.use(jwtStrategy);
-
+const auth = require('./resources/middlewares/auth');
 const productsRoutes = require('./resources/productos/products.routes');
 const usersRoutes = require('./resources/users/users.routes');
-
 const logger = require('./resources/lib/logger');
 
 const app = express();
@@ -39,7 +20,8 @@ app.use('/users', usersRoutes);
 
 /************************** */
 // READ
-app.get('/', passport.authenticate('jwt', {session:false}), (req, res) => {
+// app.get('/', passport.authenticate('jwt', {session:false}), (req, res) => {
+app.get('/', auth, (req, res) => {
   console.log(req.user);
   res.status(200).send('Hola papu');
 });
@@ -51,10 +33,10 @@ app.post('/', (req, res) => {
 })
 
 // UPDATE
-app.put('/', () => {})
+app.put('/', () => { })
 
 // DESTROY
-app.delete('/', () => {})
+app.delete('/', () => { })
 
 // CRUD
 // Create
